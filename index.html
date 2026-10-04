@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DIORITE · 闪长岩 — What's this?</title>
+<style>
+/* ============ 基础 ============ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --q:#f5f7f8;
+  --l:#d5d9dd;
+  --m:#9aa1a8;
+  --d:#5d646c;
+  --dd:#2b2f34;
+  --k:#0d0f11;
+  --glow:#7fe3c8;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--k);
+  color:var(--l);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.78;
+  overflow-x:hidden;
+  cursor:none;
+}
+a,button{cursor:none;color:inherit;text-decoration:none}
+::selection{background:var(--glow);color:#08110f}
+@media (pointer:coarse){
+  body,a,button{cursor:auto}
+  .cursor,.cursor-dot{display:none!important}
+}
+
+/* ============ 背景层 ============ */
+.bg-tex{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-repeat:repeat;background-size:256px}
+.bg-glow{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(60vw 60vw at 12% 8%, rgba(127,227,200,.055), transparent 62%),
+    radial-gradient(55vw 55vw at 88% 82%, rgba(170,195,255,.045), transparent 62%),
+    radial-gradient(40vw 40vw at 50% 50%, rgba(255,255,255,.018), transparent 70%);
+}
+
+/* ============ 光标 ============ */
+.cursor,.cursor-dot{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;border-radius:50%;will-change:transform}
+.cursor{
+  width:38px;height:38px;border:1px solid rgba(245,247,248,.55);
+  transition:width .35s var(--ease),height .35s var(--ease),background .35s,border-color .35s,opacity .35s;
+}
+.cursor.big{width:70px;height:70px;background:rgba(127,227,200,.10);border-color:rgba(127,227,200,.85)}
+.cursor-dot{width:5px;height:5px;background:var(--q);box-shadow:0 0 12px rgba(255,255,255,.9)}
+
+/* ============ 进度条 ============ */
+.progress{
+  position:fixed;top:0;left:0;height:3px;width:100%;z-index:9997;
+  transform-origin:0 50%;transform:scaleX(0);
+  background:linear-gradient(90deg,var(--q),var(--glow));
+  box-shadow:0 0 18px rgba(127,227,200,.6);
+}
+
+/* ============ 通用 ============ */
+.wrap{max-width:1180px;margin:0 auto;position:relative;z-index:2}
+.section{padding:clamp(80px,11vw,150px) clamp(20px,5vw,64px);position:relative}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+.reveal{
+  opacity:0;transform:translateY(44px);
+  transition:opacity .95s var(--ease),transform .95s var(--ease);
+  transition-delay:calc(var(--i,0) * 85ms);
+}
+.reveal.in{opacity:1;transform:none}
+
+.sec-head{margin-bottom:clamp(36px,5vw,60px);position:relative}
+.sec-num{
+  font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.4em;
+  color:var(--glow);display:block;margin-bottom:14px;
+}
+.sec-num::before{content:'';display:inline-block;width:26px;height:1px;background:var(--glow);
+  vertical-align:middle;margin-right:12px;transform:scaleX(0);transform-origin:left;
+  transition:transform .9s var(--ease) .2s}
+.reveal.in .sec-num::before{transform:scaleX(1)}
+.sec-title{
+  font-size:clamp(30px,5.2vw,58px);font-weight:800;letter-spacing:-.02em;
+  color:var(--q);line-height:1.12;
+}
+.sec-sub{color:var(--m);margin-top:14px;font-size:clamp(14px,1.6vw,17px);max-width:62ch}
+
+p.body{font-size:clamp(15px,1.55vw,17px);color:var(--l);max-width:74ch;margin-top:18px}
+p.body + p.body{margin-top:16px}
+strong.hi{color:var(--q);font-weight:700}
+em.glow{color:var(--glow);font-style:normal;font-weight:600}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;min-height:100svh;display:grid;place-items:center;
+  padding:110px 22px 90px;overflow:hidden;
+}
+#dust{position:absolute;inset:0;z-index:1}
+.hero-inner{position:relative;z-index:4;text-align:center;max-width:1000px;width:100%}
+.kicker{
+  font-family:ui-monospace,monospace;font-size:clamp(10px,1.3vw,13px);
+  letter-spacing:.42em;color:var(--m);margin-bottom:28px;
+  opacity:0;animation:fadeUp 1s var(--ease) .15s forwards;
+}
+.hero-title{
+  font-size:clamp(52px,13.5vw,186px);font-weight:900;line-height:.92;
+  letter-spacing:.01em;display:flex;justify-content:center;
+  perspective:900px;
+}
+.hero-title span{
+  display:inline-block;
+  background:linear-gradient(175deg,#ffffff 0%,#dfe4e8 38%,#8f979f 72%,#5a6169 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  opacity:0;transform:translateY(90px) rotateX(-75deg) scale(.9);
+  animation:letterIn 1s var(--ease) forwards;
+  animation-delay:calc(.35s + var(--i) * .075s);
+  transition:transform .5s var(--ease),filter .5s;
+  filter:drop-shadow(0 8px 40px rgba(0,0,0,.8));
+}
+.hero-title span:hover{transform:translateY(-12px) scale(1.1) rotateZ(-3deg);filter:drop-shadow(0 0 30px rgba(127,227,200,.75))}
+@keyframes letterIn{to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+.hero-sub{
+  margin-top:26px;font-size:clamp(14px,2vw,19px);color:var(--m);
+  opacity:0;animation:fadeUp 1s var(--ease) 1.15s forwards;
+}
+.hero-sub b{color:var(--glow);font-weight:600}
+.hero-tags{
+  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:34px;
+  opacity:0;animation:fadeUp 1s var(--ease) 1.4s forwards;
+}
+.tag{
+  font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.16em;
+  padding:7px 15px;border-radius:99px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.035);
+  color:var(--l);
+  transition:.4s var(--ease);
+}
+.tag:hover{border-color:rgba(127,227,200,.6);background:rgba(127,227,200,.09);transform:translateY(-3px);color:var(--q)}
+
+.scroll-hint{
+  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+  font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.35em;color:var(--d);
+  display:flex;flex-direction:column;align-items:center;gap:12px;z-index:4;
+  opacity:0;animation:fadeUp 1s var(--ease) 1.9s forwards;
+}
+.scroll-hint i{
+  display:block;width:1px;height:52px;
+  background:linear-gradient(180deg,transparent,var(--m));
+  position:relative;overflow:hidden;
+}
+.scroll-hint i::after{
+  content:'';position:absolute;top:-52px;left:0;width:1px;height:52px;
+  background:linear-gradient(180deg,transparent,var(--glow));
+  animation:scan 2s ease-in-out infinite;
+}
+@keyframes scan{0%{top:-52px}100%{top:52px}}
+
+/* 3D 立方体 */
+.cube-scene{
+  --s:clamp(150px,20vw,280px);
+  position:absolute;right:clamp(-30px,5vw,90px);top:50%;
+  width:var(--s);height:var(--s);
+  perspective:1500px;z-index:2;opacity:.9;pointer-events:none;
+  animation:floaty 7s ease-in-out infinite;
+}
+@keyframes floaty{
+  0%,100%{transform:translateY(-50%)}
+  50%{transform:translateY(calc(-50% - 20px))}
+}
+.cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:cubeSpin 26s linear infinite}
+@keyframes cubeSpin{from{transform:rotateX(-18deg) rotateY(0)}to{transform:rotateX(-18deg) rotateY(360deg)}}
+.face{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:inset 0 0 70px rgba(0,0,0,.75);
+}
+.f1{transform:rotateY(0deg) translateZ(calc(var(--s)/2))}
+.f2{transform:rotateY(90deg) translateZ(calc(var(--s)/2))}
+.f3{transform:rotateY(180deg) translateZ(calc(var(--s)/2))}
+.f4{transform:rotateY(-90deg) translateZ(calc(var(--s)/2))}
+.f5{transform:rotateX(90deg) translateZ(calc(var(--s)/2))}
+.f6{transform:rotateX(-90deg) translateZ(calc(var(--s)/2))}
+@media(max-width:980px){.cube-scene{opacity:.22;right:-70px}}
+@media(max-width:640px){.cube-scene{display:none}}
+
+/* ============ 终端 ============ */
+.terminal{
+  background:#080a0b;border:1px solid rgba(255,255,255,.09);border-radius:14px;
+  overflow:hidden;max-width:800px;margin:0 auto;
+  box-shadow:0 40px 90px -40px #000, inset 0 1px 0 rgba(255,255,255,.05);
+  transition:box-shadow .6s var(--ease),transform .6s var(--ease);
+}
+.terminal:hover{box-shadow:0 50px 110px -40px #000, 0 0 0 1px rgba(127,227,200,.2);transform:translateY(-4px)}
+.term-bar{
+  display:flex;align-items:center;gap:8px;padding:12px 16px;
+  background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);
+}
+.term-bar .dot{width:11px;height:11px;border-radius:50%}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.term-title{margin-left:auto;font-size:11px;color:var(--d);font-family:ui-monospace,monospace;letter-spacing:.12em}
+.term-body{
+  padding:24px 26px;min-height:320px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:clamp(12.5px,1.5vw,15px);line-height:1.95;
+  color:#c3ccd4;
+}
+.tline{white-space:pre-wrap;min-height:1.95em}
+.tline.dim{color:#4d545b}
+.tline.w{color:#fff;font-weight:600;letter-spacing:.02em}
+.tline.hl{color:var(--glow);font-weight:700;text-shadow:0 0 22px rgba(127,227,200,.55)}
+.caret{display:inline-block;width:8px;height:1em;background:var(--glow);vertical-align:-2px;animation:blink 1s steps(1) infinite;box-shadow:0 0 12px var(--glow)}
+@keyframes blink{50%{opacity:0}}
+
+.whats-wrap{text-align:center;margin-top:46px}
+.whats-btn{
+  position:relative;font-family:ui-monospace,monospace;font-size:clamp(13px,1.7vw,17px);
+  letter-spacing:.28em;font-weight:700;color:var(--q);
+  padding:20px 46px;border-radius:99px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.02));
+  overflow:hidden;transition:.45s var(--ease);
+  box-shadow:0 18px 44px -22px #000;
+}
+.whats-btn::after{
+  content:'';position:absolute;inset:0;border-radius:99px;
+  background:radial-gradient(circle at 50% 120%,rgba(127,227,200,.45),transparent 65%);
+  opacity:0;transition:opacity .45s;
+}
+.whats-btn:hover{border-color:var(--glow);color:#fff;transform:translateY(-4px) scale(1.03);
+  box-shadow:0 26px 60px -22px rgba(127,227,200,.45)}
+.whats-btn:hover::after{opacity:1}
+.whats-btn:active{transform:scale(.97)}
+
+/* ============ 卡片 ============ */
+.grid{display:grid;gap:20px}
+.grid.c3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.grid.c2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{
+  position:relative;overflow:hidden;border-radius:16px;padding:28px;
+  background:linear-gradient(155deg,rgba(255,255,255,.05),rgba(255,255,255,.012));
+  border:1px solid rgba(255,255,255,.075);
+  transition:transform .55s var(--ease),border-color .45s,box-shadow .55s;
+}
+.card::before{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .45s;
+  background:radial-gradient(320px 220px at var(--mx,50%) var(--my,50%),rgba(127,227,200,.13),transparent 68%);
+}
+.card:hover::before{opacity:1}
+.card:hover{transform:translateY(-8px);border-color:rgba(127,227,200,.32);
+  box-shadow:0 28px 60px -28px rgba(0,0,0,.95)}
+.card h3{font-size:17px;color:var(--q);font-weight:700;margin-bottom:10px;letter-spacing:.01em}
+.card p{font-size:14.5px;color:var(--m);line-height:1.8}
+.card .ico{
+  font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.24em;
+  color:var(--glow);display:block;margin-bottom:14px;opacity:.85;
+}
+
+/* ============ 合成表 ============ */
+.craft-row{
+  display:flex;align-items:center;justify-content:center;gap:clamp(16px,4vw,46px);
+  flex-wrap:wrap;margin-top:14px;
+}
+.craft-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.slot{
+  width:clamp(52px,8vw,74px);height:clamp(52px,8vw,74px);
+  border-radius:9px;background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.08);
+  background-size:cover;image-rendering:pixelated;
+  position:relative;transition:.45s var(--ease);
+}
+.slot:hover{transform:scale(1.12) rotate(2deg);border-color:rgba(127,227,200,.6);
+  box-shadow:0 0 26px rgba(127,227,200,.35);z-index:3}
+.slot.out{
+  width:clamp(72px,11vw,104px);height:clamp(72px,11vw,104px);
+  border-color:rgba(255,255,255,.2);
+  box-shadow:0 0 40px -8px rgba(127,227,200,.4);
+  animation:pulseOut 3s ease-in-out infinite;
+}
+@keyframes pulseOut{0%,100%{box-shadow:0 0 32px -10px rgba(127,227,200,.35)}50%{box-shadow:0 0 54px -6px rgba(127,227,200,.65)}}
+.craft-arrow{font-size:26px;color:var(--d);animation:slideArrow 2s ease-in-out infinite}
+@keyframes slideArrow{0%,100%{transform:translateX(-6px);opacity:.5}50%{transform:translateX(6px);opacity:1;color:var(--glow)}}
+.craft-label{font-family:ui-monospace,monospace;font-size:10.5px;color:var(--d);
+  text-align:center;margin-top:12px;letter-spacing:.14em}
+
+/* ============ 数据条 ============ */
+.bars{display:flex;flex-direction:column;gap:26px;margin-top:12px}
+.bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
+.bar-top span:first-child{color:var(--l)}
+.bar-top .mono{color:var(--q);font-size:13px;font-weight:600}
+.bar-track{height:9px;border-radius:99px;background:rgba(255,255,255,.055);overflow:hidden;margin-top:11px;position:relative}
+.bar-track i{
+  display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--d),var(--q));
+  transition:width 1.5s var(--ease);
+  position:relative;overflow:hidden;
+}
+.bar-track i::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(127,227,200,.7),transparent);
+  transform:translateX(-100%);
+  animation:shine 2.6s ease-in-out infinite;
+}
+@keyframes shine{0%{transform:translateX(-100%)}60%,100%{transform:translateX(200%)}}
+
+/* ============ 数字 ============ */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px;margin-top:12px}
+.stat{
+  border-radius:14px;padding:24px 20px;text-align:center;
+  background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.07);
+  transition:.5s var(--ease);
+}
+.stat:hover{transform:translateY(-6px);border-color:rgba(127,227,200,.3)}
+.stat .v{
+  font-family:ui-monospace,monospace;font-size:clamp(26px,4.4vw,44px);
+  font-weight:800;color:var(--q);line-height:1;letter-spacing:-.02em;
+  text-shadow:0 0 34px rgba(127,227,200,.28);
+}
+.stat .u{font-size:.5em;color:var(--glow);margin-left:3px}
+.stat .k{font-size:11.5px;color:var(--d);margin-top:12px;letter-spacing:.16em;font-family:ui-monospace,monospace}
+
+/* ============ 时间线 ============ */
+.timeline{position:relative;margin-top:20px;padding-left:34px}
+.timeline::before{
+  content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;
+  background:linear-gradient(180deg,transparent,rgba(127,227,200,.5),rgba(255,255,255,.12),transparent);
+}
+.tl-item{position:relative;padding:0 0 34px 0}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{
+  content:'';position:absolute;left:-30px;top:11px;width:9px;height:9px;border-radius:50%;
+  background:var(--dd);border:2px solid var(--m);transition:.5s var(--ease);
+}
+.tl-item:hover::before{background:var(--glow);border-color:var(--glow);box-shadow:0 0 20px var(--glow);transform:scale(1.35)}
+.tl-item h4{color:var(--q);font-size:16px;font-weight:700;margin-bottom:6px}
+.tl-item .yr{font-family:ui-monospace,monospace;font-size:11px;color:var(--glow);letter-spacing:.18em;display:block;margin-bottom:6px}
+.tl-item p{font-size:14.5px;color:var(--m);max-width:62ch}
+
+/* ============ 引用 ============ */
+.quote{
+  text-align:center;max-width:900px;margin:0 auto;
+  padding:clamp(36px,6vw,64px) clamp(24px,5vw,50px);
+  border-radius:20px;position:relative;overflow:hidden;
+  background:linear-gradient(155deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
+  border:1px solid rgba(255,255,255,.09);
+}
+.quote::before{
+  content:'';position:absolute;inset:-2px;border-radius:20px;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent,rgba(127,227,200,.5),transparent 40%);
+  animation:spinBorder 8s linear infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;padding:1px;
+}
+@keyframes spinBorder{to{transform:rotate(360deg)}}
+.quote p{
+  font-size:clamp(16px,2.3vw,23px);color:var(--q);line-height:1.85;
+  font-weight:500;letter-spacing:.01em;
+}
+.quote .mark{
+  font-family:ui-monospace,monospace;color:var(--glow);
+  font-size:clamp(11px,1.4vw,13px);letter-spacing:.34em;display:block;margin-bottom:20px;
+}
+
+/* ============ 火花 ============ */
+.spark{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:9998;will-change:transform,opacity}
+
+/* ============ 揭示词 ============ */
+.reveal-word{
+  position:fixed;inset:0;display:grid;place-items:center;z-index:9000;pointer-events:none;
+  font-size:clamp(46px,14vw,190px);font-weight:900;letter-spacing:.04em;
+  color:var(--q);opacity:0;transform:scale(.55);filter:blur(14px);
+  transition:opacity .45s var(--ease),transform .8s var(--ease),filter .6s var(--ease);
+  background:radial-gradient(circle at center,rgba(13,15,17,.9),rgba(13,15,17,.97));
+  text-shadow:0 0 70px rgba(127,227,200,.6),0 0 140px rgba(127,227,200,.3);
+}
+.reveal-word.active{opacity:1;transform:scale(1);filter:blur(0)}
+
+/* ============ 震动 ============ */
+.shake{animation:shake .5s cubic-bezier(.36,.07,.19,.97)}
+@keyframes shake{
+  10%,90%{transform:translate3d(-2px,0,0)}
+  20%,80%{transform:translate3d(4px,0,0)}
+  30%,50%,70%{transform:translate3d(-7px,0,0)}
+  40%,60%{transform:translate3d(7px,0,0)}
+}
+
+/* ============ 回到顶部 ============ */
+.totop{
+  position:fixed;right:24px;bottom:24px;z-index:900;
+  width:48px;height:48px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(20,23,26,.82);backdrop-filter:blur(12px);
+  color:var(--l);font-size:16px;
+  opacity:0;pointer-events:none;transform:translateY(16px);
+  transition:.5s var(--ease);
+}
+.totop.show{opacity:1;pointer-events:auto;transform:none}
+.totop:hover{border-color:var(--glow);color:var(--glow);transform:translateY(-4px);
+  box-shadow:0 0 28px -6px rgba(127,227,200,.55)}
+
+/* ============ 页脚 ============ */
+footer{
+  padding:70px 24px 60px;text-align:center;position:relative;z-index:2;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+footer .f-big{
+  font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.44em;
+  color:var(--d);
+}
+footer .f-small{font-size:12px;color:#3f464d;margin-top:18px;letter-spacing:.08em}
+
+/* 移动端微调 */
+@media(max-width:600px){
+  .hero-title{gap:0}
+  .term-body{padding:18px;min-height:280px}
+  .slot{border-radius:7px}
+}
+</style>
+</head>
+<body>
+
+<!-- 背景 -->
+<div class="bg-tex" id="bgTex"></div>
+<div class="bg-glow"></div>
+
+<!-- 光标 -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- 进度 -->
+<div class="progress" id="progress"></div>
+
+<!-- 揭示词 -->
+<div class="reveal-word" id="revealWord">DIORITE</div>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="hero">
+  <canvas id="dust"></canvas>
+
+  <div class="cube-scene">
+    <div class="cube">
+      <div class="face f1"></div>
+      <div class="face f2"></div>
+      <div class="face f3"></div>
+      <div class="face f4"></div>
+      <div class="face f5"></div>
+      <div class="face f6"></div>
+    </div>
+  </div>
+
+  <div class="hero-inner">
+    <div class="kicker">MINECRAFT · GEOLOGY · HISTORY</div>
+    <h1 class="hero-title" aria-label="DIORITE">
+      <span style="--i:0">D</span><span style="--i:1">I</span><span style="--i:2">O</span><span style="--i:3">R</span><span style="--i:4">I</span><span style="--i:5">T</span><span style="--i:6">E</span>
+    </h1>
+    <p class="hero-sub">闪长岩 · 一块你每次见到都要重新问一遍的石头<br><b>“What's this?”</b></p>
+    <div class="hero-tags">
+      <span class="tag">MC 三废石</span>
+      <span class="tag">汉谟拉比法典</span>
+      <span class="tag">俯冲带岩浆</span>
+      <span class="tag">CO₂ 矿化</span>
+      <span class="tag">闪长岩教</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <i></i>
+    SCROLL
+  </div>
+</section>
+
+<!-- ==================== 01 梗 ==================== -->
+<section class="section" id="s1">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">01 / THE MEME</span>
+      <h2 class="sec-title">梗的起源</h2>
+      <p class="sec-sub">一个英语博主，一块石头，和一句永远问不完的话。</p>
+    </div>
+
+    <p class="body reveal" style="--i:1">
+      这个梗的核心画面很简单：一个英语（或英语内容）博主在挖矿、探索时，<strong class="hi">反复遇到一块灰白斑点的石头</strong>，
+      每次都不认识它，于是发出灵魂拷问——<em class="glow">“What's this?”</em>
+      然后揭晓答案：<em class="glow">“Diorite.”</em>
+    </p>
+    <p class="body reveal" style="--i:2">
+      之所以好笑，是因为它是<strong class="hi">真的</strong>。Diorite 在《Minecraft》中生成量极大、外观不显眼、
+      早期版本几乎没有实际用途，导致玩家频繁遇到却“记不住它”。
+      这种「频繁出现 → 毫无存在感 → 再次忘记」的循环，就是梗的喜剧内核。
+    </p>
+
+    <div style="height:56px"></div>
+
+    <div class="terminal reveal" style="--i:3">
+      <div class="term-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="term-title">mining_log.txt</span>
+      </div>
+      <div class="term-body" id="termBody"></div>
+    </div>
+
+    <div class="whats-wrap reveal" style="--i:4">
+      <button class="whats-btn" id="whatsBtn">WHAT'S THIS ?</button>
+    </div>
+
+    <div style="height:64px"></div>
+
+    <div class="grid c3">
+      <div class="card reveal" style="--i:5">
+        <span class="ico">01 / 生成量</span>
+        <h3>到处都是</h3>
+        <p>它以大型矿脉的形式在地下生成，在峭壁生物群系的地表尤其常见。你挖三格，它出现两次。</p>
+      </div>
+      <div class="card reveal" style="--i:6">
+        <span class="ico">02 / 存在感</span>
+        <h3>没有用途</h3>
+        <p>原版中它几乎没有功能性用途，只能当建筑方块。玩家因此对它“视而不见”。</p>
+      </div>
+      <div class="card reveal" style="--i:7">
+        <span class="ico">03 / 记忆</span>
+        <h3>记不住</h3>
+        <p>灰白“椒盐”质感，不亮眼也不难看，正是这种平庸让它成了“最熟悉的陌生人”。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 02 MINECRAFT ==================== -->
+<section class="section" id="s2">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">02 / MINECRAFT</span>
+      <h2 class="sec-title">三废石之一</h2>
+      <p class="sec-sub">Diorite · Granite · Andesite —— 被玩家集体嫌弃的三兄弟。</p>
+    </div>
+
+    <p class="body reveal" style="--i:1">
+      在《Minecraft》原版中，闪长岩（Diorite）、花岗岩（Granite）、安山岩（Andesite）
+      被玩家戏称为<strong class="hi">“三废石”</strong>——因为它们除了作为建筑方块外几乎没有功能用途。
+      官方甚至调侃 Diorite“听起来像你在砍僵尸时喊出来的东西”。
+    </p>
+    <p class="body reveal" style="--i:2">
+      官方对其外观的描述是：<em class="glow">“看起来有点像圆石和石英的杂交品种。”</em>
+      它于 1.8 版本加入游戏，以大型矿脉形式生成，在峭壁生物群系地表尤为常见。
+    </p>
+
+    <div style="height:56px"></div>
+
+    <div class="craft-row reveal" style="--i:3">
+      <div>
+        <div class="craft-grid">
+          <div class="slot" id="s-cob1"></div>
+          <div class="slot" id="s-qtz1"></div>
+          <div class="slot" id="s-qtz2"></div>
+          <div class="slot" id="s-cob2"></div>
+        </div>
+        <div class="craft-label">COBBLESTONE + NETHER QUARTZ</div>
+      </div>
+      <div class="craft-arrow">→</div>
+      <div>
+        <div class="slot out" id="s-dio"></div>
+        <div class="craft-label">DIORITE</div>
+      </div>
+    </div>
+
+    <div style="height:64px"></div>
+
+    <div class="grid c3">
+      <div class="card reveal" style="--i:4">
+        <span class="ico">属性</span>
+        <h3>基础数据</h3>
+        <p>硬度 1.5，爆炸抗性 30，需镐类工具开采，堆叠上限 64。</p>
+      </div>
+      <div class="card reveal" style="--i:5">
+        <span class="ico">合成</span>
+        <h3>磨制闪长岩</h3>
+        <p>4 个闪长岩在 2×2 合成格中合成，用作地板装饰效果不错。</p>
+      </div>
+      <div class="card reveal" style="--i:6">
+        <span class="ico">交易</span>
+        <h3>石匠村民</h3>
+        <p>老手级石匠有 2/7 概率以 1 绿宝石出售 4 个磨制闪长岩。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 03 地质 ==================== -->
+<section class="section" id="s3">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">03 / GEOLOGY</span>
+      <h2 class="sec-title">地质学中的闪长岩</h2>
+      <p class="sec-sub">中性深成侵入岩 · 俯冲带的产物 · 安山岩的“地下兄弟”。</p>
+    </div>
+
+    <p class="body reveal" style="--i:1">
+      闪长岩（Diorite）是一种<strong class="hi">中性深成侵入岩</strong>，全晶质，SiO₂ 含量约 53%–66%。
+      在地质分类中位于 QAPF 图的第 10 区，属于闪长岩类。
+    </p>
+    <p class="body reveal" style="--i:2">
+      与<strong class="hi">辉长岩</strong>的区别：闪长岩中斜长石的钙长石（An）含量低于 50%。
+      与<strong class="hi">花岗岩</strong>的区别：闪长岩几乎不含石英，而花岗岩富含石英。
+    </p>
+
+    <div style="height:52px"></div>
+
+    <div class="bars reveal" style="--i:3">
+      <div class="bar" data-w="48">
+        <div class="bar-top"><span>斜长石 Plagioclase</span><span class="mono">45–50%</span></div>
+        <div class="bar-track"><i></i></div>
+      </div>
+      <div class="bar" data-w="43">
+        <div class="bar-top"><span>角闪石 Hornblende</span><span class="mono">40–45%</span></div>
+        <div class="bar-track"><i></i></div>
+      </div>
+      <div class="bar" data-w="5">
+        <div class="bar-top"><span>石英 Quartz</span><span class="mono">≈ 5%</span></div>
+        <div class="bar-track"><i></i></div>
+      </div>
+      <div class="bar" data-w="8">
+        <div class="bar-top"><span>黑云母 / 辉石 / 钾长石</span><span class="mono">少量</span></div>
+        <div class="bar-track"><i></i></div>
+      </div>
+    </div>
+
+    <div style="height:56px"></div>
+
+    <div class="grid c2">
+      <div class="card reveal" style="--i:4">
+        <span class="ico">形成环境</span>
+        <h3>俯冲带与裂谷</h3>
+        <p>闪长岩形成于俯冲带或裂谷环境，由地幔楔部分熔融产生的岩浆上升侵位结晶而成。
+           它可以来自被交代的地幔岩石的部分熔融，也可能伴随地壳混染。</p>
+      </div>
+      <div class="card reveal" style="--i:5">
+        <span class="ico">对应关系</span>
+        <h3>闪长岩 ⇄ 安山岩</h3>
+        <p>与闪长岩成分相当的喷出岩是<strong class="hi">安山岩</strong>。
+           同样的岩浆：在地下缓慢冷却结晶 → 闪长岩（粗粒）；
+           喷出地表快速冷却 → 安山岩（细粒）。这是理解它形成的关键。</p>
+      </div>
+      <div class="card reveal" style="--i:6">
+        <span class="ico">外观</span>
+        <h3>椒盐质感</h3>
+        <p>灰白至深灰色，有时带绿色调，具有典型的“椒盐”外观——
+           白色斜长石与黑色角闪石形成鲜明对比，颗粒粗大，肉眼可辨矿物晶体。</p>
+      </div>
+      <div class="card reveal" style="--i:7">
+        <span class="ico">鉴别</span>
+        <h3>与花岗岩的区别</h3>
+        <p>闪长岩颜色更深、更“黑白分明”，缺乏花岗岩中常见的粉红色钾长石和大量石英。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 04 化学 ==================== -->
+<section class="section" id="s4">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">04 / CHEMISTRY</span>
+      <h2 class="sec-title">化学组成与工业应用</h2>
+      <p class="sec-sub">Zirkel 平均成分 · 钙长石碳酸化 · 建筑材料。</p>
+    </div>
+
+    <p class="body reveal" style="--i:1">
+      根据 Zirkel 的平均值，闪长岩的化学组成如下。注意它的
+      <strong class="hi">SiO₂ 含量落在中性岩区间</strong>，这正是它介于酸性花岗岩与基性辉长岩之间的原因。
+    </p>
+
+    <div style="height:40px"></div>
+
+    <div class="stats">
+      <div class="stat reveal" style="--i:2"><div class="v"><span class="counter" data-to="52.66" data-dec="2">0</span><span class="u">%</span></div><div class="k">SiO₂</div></div>
+      <div class="stat reveal" style="--i:3"><div class="v"><span class="counter" data-to="18.92" data-dec="2">0</span><span class="u">%</span></div><div class="k">Al₂O₃</div></div>
+      <div class="stat reveal" style="--i:4"><div class="v"><span class="counter" data-to="9.09" data-dec="2">0</span><span class="u">%</span></div><div class="k">FeO</div></div>
+      <div class="stat reveal" style="--i:5"><div class="v"><span class="counter" data-to="6.73" data-dec="2">0</span><span class="u">%</span></div><div class="k">CaO</div></div>
+      <div class="stat reveal" style="--i:6"><div class="v"><span class="counter" data-to="5.12" data-dec="2">0</span><span class="u">%</span></div><div class="k">MgO</div></div>
+      <div class="stat reveal" style="--i:7"><div class="v"><span class="counter" data-to="3.71" data-dec="2">0</span><span class="u">%</span></div><div class="k">Na₂O</div></div>
+      <div class="stat reveal" style="--i:8"><div class="v"><span class="counter" data-to="2.42" data-dec="2">0</span><span class="u">%</span></div><div class="k">K₂O</div></div>
+      <div class="stat reveal" style="--i:9"><div class="v"><span class="counter" data-to="1.35" data-dec="2">0</span><span class="u">%</span></div><div class="k">H₂O</div></div>
+    </div>
+
+    <div style="height:56px"></div>
+
+    <div class="grid c2">
+      <div class="card reveal" style="--i:10">
+        <span class="ico">碳捕集</span>
+        <h3>钙长石的碳酸化反应</h3>
+        <p>闪长岩中的<strong class="hi">钙长石</strong>是最易发生碳酸化反应的矿物相。
+           在超临界 CO₂ 条件下（250°C、17.23 MPa），闪长岩粉末中的钙长石被鉴定为最易受碳酸化影响的组分。
+           这一性质使闪长岩在<em class="glow">碳捕集与封存</em>研究中受到关注——
+           岩石可以与 CO₂ 反应生成稳定的碳酸盐矿物，实现长期固碳。</p>
+      </div>
+      <div class="card reveal" style="--i:11">
+        <span class="ico">工业</span>
+        <h3>建筑石材</h3>
+        <p>闪长岩用作建筑石材和工业原料，可用作外墙饰面石材、台阶和阳台地板。
+           但由于颜色较深、供应有限，作为装饰石材的使用不如花岗岩广泛。
+           著名品种包括山东的<strong class="hi">“泰安绿”</strong>和吉林团山的闪长岩。
+           此外也可用于生产烧结型空心砖等建筑材料。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 05 历史 ==================== -->
+<section class="section" id="s5">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">05 / HISTORY</span>
+      <h2 class="sec-title">历史中的闪长岩</h2>
+      <p class="sec-sub">一根 2.23 米高的黑色石柱，承载着人类最早的法典之一。</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item reveal" style="--i:1">
+        <span class="yr">约公元前 1750 年</span>
+        <h4>汉谟拉比法典</h4>
+        <p>闪长岩最著名的历史文物是<strong class="hi">汉谟拉比法典</strong>——古巴比伦国王汉谟拉比颁布的法律汇编，
+           刻在一根高 2.23 米的黑色闪长岩石柱上。闪长岩极高的硬度使铭文得以异常完好地保存，
+           它是人类现存最古老、已被完整翻译的成文法典之一。</p>
+      </div>
+      <div class="tl-item reveal" style="--i:2">
+        <span class="yr">19 世纪</span>
+        <h4>球状闪长岩与“拿破仑石”</h4>
+        <p>一种特殊的闪长岩变种称为<strong class="hi">球状闪长岩</strong>，矿物晶体呈球状聚集，
+           又称“拿破仑岩”。最著名的产地是拿破仑的故乡科西嘉岛。</p>
+      </div>
+      <div class="tl-item reveal" style="--i:3">
+        <span class="yr">2014 年</span>
+        <h4>进入方块世界</h4>
+        <p>Diorite 随《Minecraft》1.8 版本加入游戏，从此成为无数玩家背包里最不受欢迎的方块之一。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 06 社区文化 ==================== -->
+<section class="section" id="s6">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">06 / CULTURE</span>
+      <h2 class="sec-title">从梗到亚文化</h2>
+      <p class="sec-sub">当一块石头拥有了自己的语言和共和国。</p>
+    </div>
+
+    <p class="body reveal" style="--i:1">
+      在 Minecraft 中文社区中，一位玩家因在存档中“总是在闪长岩附近发现钻石”、
+      垂直挖矿时闪长岩“又总是提醒附近有岩浆”，于 <strong class="hi">2019 年创立了“闪长岩教”</strong>。
+    </p>
+    <p class="body reveal" style="--i:2">
+      随后发展出以汉语拼音为基础的<em class="glow">“闪长岩语”</em>，
+      2023 年开始设计独特的闪长岩字母，并构建了一套虚构的
+      <em class="glow">“闪长岩第一共和国”</em>世界观。
+      这是 Diorite 从游戏梗发展为社区亚文化的一个有趣案例。
+    </p>
+
+    <div style="height:48px"></div>
+
+    <div class="grid c3">
+      <div class="card reveal" style="--i:3">
+        <span class="ico">2019</span>
+        <h3>闪长岩教</h3>
+        <p>一个因为“总在闪长岩旁边挖到钻石”而诞生的信仰体系。</p>
+      </div>
+      <div class="card reveal" style="--i:4">
+        <span class="ico">2023</span>
+        <h3>闪长岩字母</h3>
+        <p>以汉语拼音为基础设计的一套独特文字系统。</p>
+      </div>
+      <div class="card reveal" style="--i:5">
+        <span class="ico">世界观</span>
+        <h3>闪长岩第一共和国</h3>
+        <p>围绕这块石头构建的虚构国家设定，有完整的背景叙事。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 07 总结 ==================== -->
+<section class="section" id="s7">
+  <div class="wrap">
+    <div class="sec-head reveal" style="text-align:center">
+      <span class="sec-num" style="text-align:center">07 / SUMMARY</span>
+      <h2 class="sec-title">一块石头的全部宇宙</h2>
+    </div>
+
+    <div class="quote reveal" style="--i:1">
+      <span class="mark">DIORITE</span>
+      <p>
+        Diorite 是一个罕见的“跨域符号”：<br>
+        在地质学中，它是俯冲带岩浆作用的产物，是汉谟拉比法典的载体，是碳封存研究的对象；<br>
+        在 Minecraft 中，它是被玩家反复遗忘的“三废石”，是 <em class="glow">“What's this?”</em> 梗的主角；<br>
+        在社区文化中，它甚至催生了自创语言和虚构国家。
+      </p>
+      <p style="margin-top:26px;font-size:.85em;color:var(--m)">
+        一个灰色斑点石头，同时承载着地球深部的岩浆历史、人类最早的法典、<br>
+        以及互联网时代的集体调侃——这大概是它最有趣的地方。
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-big">WHAT'S THIS? — DIORITE.</div>
+  <div class="f-small">Minecraft · Geology · Chemistry · History · Community</div>
+</footer>
+
+<button class="totop" id="toTop">↑</button>
+
+<script>
+/* =========================================================
+   0. 纹理生成器（像素级）
+   ========================================================= */
+function makeTexture(size, base, dark, light, pDark, pLight, px){
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const x = c.getContext('2d');
+  x.fillStyle = base;
+  x.fillRect(0, 0, size, size);
+  const n = px || 4;
+  for(let i = 0; i < size; i += n){
+    for(let j = 0; j < size; j += n){
+      const r = Math.random();
+      let col = null;
+      if(r < pDark) col = dark;
+      else if(r < pDark + pLight) col = light;
+      if(col){
+        x.globalAlpha = 0.35 + Math.random() * 0.65;
+        x.fillStyle = col;
+        x.fillRect(i, j, n, n);
+      }
+    }
+  }
+  x.globalAlpha = 1;
+  return c.toDataURL();
+}
+
+const TEX = {
+  diorite : makeTexture(128, '#c9cbcd', '#33373b', '#ffffff', 0.075, 0.075, 3),
+  cobble  : makeTexture(64,  '#7b7f83', '#4a4e52', '#a8adb2', 0.30, 0.20, 8),
+  quartz  : makeTexture(64,  '#eef0f2', '#c9ced3', '#ffffff', 0.22, 0.28, 8),
+  bg      : makeTexture(256, '#101315', '#181c1f', '#0a0c0e', 0.30, 0.16, 3)
+};
+
+/* 应用纹理 */
+document.getElementById('bgTex').style.backgroundImage = `url(${TEX.bg})`;
+document.getElementById('s-cob1').style.backgroundImage = `url(${TEX.cobble})`;
+document.getElementById('s-cob2').style.backgroundImage = `url(${TEX.cobble})`;
+document.getElementById('s-qtz1').style.backgroundImage = `url(${TEX.quartz})`;
+document.getElementById('s-qtz2').style.backgroundImage = `url(${TEX.quartz})`;
+document.getElementById('s-dio').style.backgroundImage  = `url(${TEX.diorite})`;
+
+document.querySelectorAll('.face').forEach((f, i) => {
+  f.style.backgroundImage = `url(${TEX.diorite})`;
+  f.style.filter = `brightness(${0.62 + i * 0.09}) contrast(1.1)`;
+});
+
+/* =========================================================
+   1. 自定义光标
+   ========================================================= */
+(function(){
+  const cur = document.getElementById('cursor');
+  const dot = document.getElementById('cursorDot');
+  if(!window.matchMedia('(pointer:fine)').matches) return;
+
+  let mx = innerWidth / 2, my = innerHeight / 2;
+  let cx = mx, cy = my;
+
+  addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+  });
+
+  (function loop(){
+    cx += (mx - cx) * 0.14;
+    cy += (my - cy) * 0.14;
+    cur.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%)`;
+    requestAnimationFrame(loop);
+  })();
+
+  const hoverables = document.querySelectorAll('a, button, .card, .slot, .tag, .stat, .tl-item');
+  hoverables.forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('big'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+  });
+})();
+
+/* =========================================================
+   2. 粒子尘埃（Hero Canvas）
+   ========================================================= */
+(function(){
+  const canvas = document.getElementById('dust');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const DPR = Math.min(devicePixelRatio || 1, 2);
+  let W = 0, H = 0, parts = [];
+  const mouse = { x: -1e4, y: -1e4 };
+
+  function build(){
+    const r = canvas.parentElement.getBoundingClientRect();
+    W = canvas.width  = Math.max(1, Math.floor(r.width  * DPR));
+    H = canvas.height = Math.max(1, Math.floor(r.height * DPR));
+    canvas.style.width  = r.width + 'px';
+    canvas.style.height = r.height + 'px';
+
+    const count = Math.min(170, Math.max(60, Math.round(r.width * r.height / 13000)));
+    parts = [];
+    for(let i = 0; i < count; i++){
+      const isLight = Math.random() < 0.6;
+      parts.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: (Math.random() * 2.4 + 0.7) * DPR,
+        vx: (Math.random() - 0.5) * 0.22 * DPR,
+        vy: (Math.random() - 0.5) * 0.22 * DPR,
+        a: Math.random() * 0.55 + 0.14,
+        col: isLight
+          ? (Math.random() < 0.5 ? '245,247,248' : '180,190,198')
+          : '70,78,86'
+      });
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    const R = 150 * DPR, R2 = R * R;
+
+    for(const p of parts){
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if(p.x < -20) p.x = W + 20;
+      if(p.x > W + 20) p.x = -20;
+      if(p.y < -20) p.y = H + 20;
+      if(p.y > H + 20) p.y = -20;
+
+      const dx = p.x - mouse.x, dy = p.y - mouse.y;
+      const d2 = dx * dx + dy * dy;
+      if(d2 < R2 && d2 > 0.01){
+        const d = Math.sqrt(d2);
+        const f = (1 - d / R) * 2.6;
+        p.x += (dx / d) * f;
+        p.y += (dy / d) * f;
+      }
+
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(${p.col},${p.a})`;
+      ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mouse.x = (e.clientX - r.left) * DPR;
+    mouse.y = (e.clientY - r.top)  * DPR;
+  });
+  addEventListener('mouseleave', () => { mouse.x = mouse.y = -1e4; });
+
+  let rt;
+  addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(build, 180);
+  });
+
+  build();
+  draw();
+})();
+
+/* =========================================================
+   3. 滚动显现 / 进度条 / 回顶
+   ========================================================= */
+(function(){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const bar = document.getElementById('progress');
+  const toTop = document.getElementById('toTop');
+
+  function onScroll(){
+    const h = document.documentElement.scrollHeight - innerHeight;
+    const p = h > 0 ? scrollY / h : 0;
+    bar.style.transform = `scaleX(${p})`;
+    toTop.classList.toggle('show', scrollY > 600);
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+})();
+
+/* =========================================================
+   4. 数据条 & 计数器
+   ========================================================= */
+(function(){
+  const barIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        const fill = e.target.querySelector('i');
+        const w = e.target.dataset.w || 0;
+        setTimeout(() => { fill.style.width = w + '%'; }, 120);
+        barIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.bar').forEach(el => barIO.observe(el));
+
+  const numIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(!e.isIntersecting) return;
+      const el = e.target;
+      const to  = parseFloat(el.dataset.to);
+      const dec = parseInt(el.dataset.dec || 0);
+      const dur = 1500;
+      const t0 = performance.now();
+
+      (function tick(now){
+        const p = Math.min(1, (now - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = (to * eased).toFixed(dec);
+        if(p < 1) requestAnimationFrame(tick);
+      })(t0);
+
+      numIO.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.counter').forEach(el => numIO.observe(el));
+})();
+
+/* =========================================================
+   5. 卡片光晕跟随
+   ========================================================= */
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width  * 100) + '%');
+    card.style.setProperty('--my', ((e.clientY - r.top ) / r.height * 100) + '%');
+  });
+});
+
+/* =========================================================
+   6. 终端打字机
+   ========================================================= */
+(function(){
+  const body = document.getElementById('termBody');
+  if(!body) return;
+
+  const lines = [
+    { text: '$ dig',                          cls: 'dim' },
+    { text: '',                               cls: '' },
+    { text: '[ 你挖到了一块石头 ]',            cls: '' },
+    { text: "what's this?",                   cls: 'w' },
+    { text: '...',                            cls: 'dim' },
+    { text: 'diorite.',                       cls: 'hl' },
+    { text: '',                               cls: '' },
+    { text: '$ dig again',                    cls: 'dim' },
+    { text: '[ 你又挖到了一块石头 ]',          cls: '' },
+    { text: "what's this?",                   cls: 'w' },
+    { text: '...',                            cls: 'dim' },
+    { text: 'diorite.',                       cls: 'hl' },
+    { text: '',                               cls: '' },
+    { text: '[ 无限循环 · 已持续十年 ]',       cls: 'dim' }
+  ];
+
+  let started = false;
+
+  function typeAll(){
+    if(started) return;
+    started = true;
+    body.innerHTML = '';
+
+    const caret = document.createElement('span');
+    caret.className = 'caret';
+
+    let li = 0;
+
+    function nextLine(){
+      if(li >= lines.length){
+        caret.remove();
+        return;
+      }
+      const def = lines[li];
+      const row = document.createElement('div');
+      row.className = 'tline' + (def.cls ? ' ' + def.cls : '');
+
+      const txt = document.createElement('span');
+      row.appendChild(txt);
+      row.appendChild(caret);
+      body.appendChild(row);
+
+      let ci = 0;
+      const s = def.text;
+
+      (function charStep(){
+        if(ci < s.length){
+          txt.textContent += s[ci];
+          const ch = s[ci];
+          ci++;
+          setTimeout(charStep, ch === '.' ? 210 : (34 + Math.random() * 45));
+        }else{
+          li++;
+          setTimeout(nextLine, 330);
+        }
+      })();
+    }
+    nextLine();
+  }
+
+  const tIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ typeAll(); tIO.disconnect(); }
+    });
+  }, { threshold: 0.35 });
+  tIO.observe(body);
+})();
+
+/* =========================================================
+   7. “WHAT'S THIS?” 彩蛋
+   ========================================================= */
+(function(){
+  const btn   = document.getElementById('whatsBtn');
+  const word  = document.getElementById('revealWord');
+  const bodyEl = document.body;
+  let busy = false;
+
+  function burst(x, y){
+    for(let i = 0; i < 42; i++){
+      const p = document.createElement('i');
+      p.className = 'spark';
+      p.style.left = x + 'px';
+      p.style.top  = y + 'px';
+      const dark = Math.random() < 0.45;
+      p.style.background = dark ? '#3b3f43' : (Math.random() < 0.4 ? '#7fe3c8' : '#f2f4f6');
+      p.style.boxShadow = dark ? 'none' : '0 0 14px rgba(127,227,200,.8)';
+      document.body.appendChild(p);
+
+      const a = Math.random() * Math.PI * 2;
+      const d = 90 + Math.random() * 300;
+      const rot = (Math.random() - 0.5) * 720;
+
+      p.animate([
+        { transform: 'translate(-50%,-50%) scale(1) rotate(0deg)', opacity: 1 },
+        { transform: `translate(calc(-50% + ${Math.cos(a)*d}px), calc(-50% + ${Math.sin(a)*d}px)) scale(0) rotate(${rot}deg)`, opacity: 0 }
+      ], {
+        duration: 700 + Math.random() * 700,
+        easing: 'cubic-bezier(.16,1,.3,1)'
+      }).onfinish = () => p.remove();
+    }
+  }
+
+  btn.addEventListener('click', e => {
+    if(busy) return;
+    busy = true;
+
+    const r = btn.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height / 2);
+
+    bodyEl.classList.add('shake');
+    setTimeout(() => bodyEl.classList.remove('shake'), 520);
+
+    setTimeout(() => {
+      word.classList.add('active');
+      burst(innerWidth / 2, innerHeight / 2);
+      setTimeout(() => burst(innerWidth * 0.35, innerHeight * 0.55), 160);
+      setTimeout(() => burst(innerWidth * 0.65, innerHeight * 0.45), 300);
+    }, 180);
+
+    setTimeout(() => {
+      word.classList.remove('active');
+      busy = false;
+    }, 1900);
+  });
+})();
+
+/* =========================================================
+   8. Hero 标题视差
+   ========================================================= */
+(function(){
+  const title = document.querySelector('.hero-title');
+  const sub   = document.querySelector('.hero-sub');
+  if(!title) return;
+  if(!window.matchMedia('(pointer:fine)').matches) return;
+
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+
+  addEventListener('mousemove', e => {
+    tx = (e.clientX / innerWidth  - 0.5) * 26;
+    ty = (e.clientY / innerHeight - 0.5) * 18;
+  });
+
+  (function loop(){
+    cx += (tx - cx) * 0.06;
+    cy += (ty - cy) * 0.06;
+    title.style.transform = `translate(${cx}px, ${cy}px)`;
+    sub.style.transform   = `translate(${cx * 0.4}px, ${cy * 0.4}px)`;
+    requestAnimationFrame(loop);
+  })();
+})();
+</script>
+</body>
+</html>
